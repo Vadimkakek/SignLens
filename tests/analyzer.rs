@@ -10,17 +10,19 @@ fn word_uint(value: u8) -> String {
 
 #[test]
 fn decodes_hex_with_optional_prefix() {
-    assert_eq!(decode_hex("0x095ea7b3").unwrap(), vec![0x09, 0x5e, 0xa7, 0xb3]);
-    assert_eq!(decode_hex("095ea7b3").unwrap(), vec![0x09, 0x5e, 0xa7, 0xb3]);
+    assert_eq!(
+        decode_hex("0x095ea7b3").unwrap(),
+        vec![0x09, 0x5e, 0xa7, 0xb3]
+    );
+    assert_eq!(
+        decode_hex("095ea7b3").unwrap(),
+        vec![0x09, 0x5e, 0xa7, 0xb3]
+    );
 }
 
 #[test]
 fn detects_unlimited_erc20_approval_as_high_risk() {
-    let calldata = format!(
-        "0x095ea7b3{}{}",
-        word_address("1"),
-        "ff".repeat(32)
-    );
+    let calldata = format!("0x095ea7b3{}{}", word_address("1"), "ff".repeat(32));
 
     let analysis = analyze_calldata(&calldata).unwrap();
     assert_eq!(analysis.function, Some("approve"));
@@ -38,11 +40,7 @@ fn detects_unlimited_erc20_approval_as_high_risk() {
 
 #[test]
 fn treats_zero_approval_as_low_risk_revoke() {
-    let calldata = format!(
-        "0x095ea7b3{}{}",
-        word_address("2"),
-        "00".repeat(32)
-    );
+    let calldata = format!("0x095ea7b3{}{}", word_address("2"), "00".repeat(32));
 
     let analysis = analyze_calldata(&calldata).unwrap();
     assert_eq!(analysis.risk, RiskLevel::Low);
@@ -51,11 +49,7 @@ fn treats_zero_approval_as_low_risk_revoke() {
 
 #[test]
 fn decodes_transfer_amount_in_decimal() {
-    let calldata = format!(
-        "0xa9059cbb{}{}",
-        word_address("3"),
-        word_uint(42)
-    );
+    let calldata = format!("0xa9059cbb{}{}", word_address("3"), word_uint(42));
 
     let analysis = analyze_calldata(&calldata).unwrap();
     assert_eq!(analysis.function, Some("transfer"));
@@ -79,11 +73,7 @@ fn decodes_transfer_from() {
 
 #[test]
 fn detects_set_approval_for_all_true_as_high_risk() {
-    let calldata = format!(
-        "0xa22cb465{}{}",
-        word_address("6"),
-        word_uint(1)
-    );
+    let calldata = format!("0xa22cb465{}{}", word_address("6"), word_uint(1));
 
     let analysis = analyze_calldata(&calldata).unwrap();
     assert_eq!(analysis.function, Some("setApprovalForAll"));
@@ -93,22 +83,14 @@ fn detects_set_approval_for_all_true_as_high_risk() {
 
 #[test]
 fn rejects_non_canonical_boolean() {
-    let calldata = format!(
-        "0xa22cb465{}{}",
-        word_address("7"),
-        word_uint(2)
-    );
+    let calldata = format!("0xa22cb465{}{}", word_address("7"), word_uint(2));
 
     assert!(analyze_calldata(&calldata).is_err());
 }
 
 #[test]
 fn treats_set_approval_for_all_false_as_low_risk() {
-    let calldata = format!(
-        "0xa22cb465{}{}",
-        word_address("7"),
-        word_uint(0)
-    );
+    let calldata = format!("0xa22cb465{}{}", word_address("7"), word_uint(0));
 
     let analysis = analyze_calldata(&calldata).unwrap();
     assert_eq!(analysis.risk, RiskLevel::Low);
@@ -137,15 +119,11 @@ fn rejects_wrong_argument_length_for_known_selector() {
 
 #[test]
 fn json_output_is_structured_and_escaped() {
-    let calldata = format!(
-        "0x095ea7b3{}{}",
-        word_address("8"),
-        word_uint(9)
-    );
+    let calldata = format!("0x095ea7b3{}{}", word_address("8"), word_uint(9));
     let analysis = analyze_calldata(&calldata).unwrap();
     let json = format_json(&analysis);
 
-    assert!(json.contains(""risk": "MEDIUM""));
-    assert!(json.contains(""function": "approve""));
-    assert!(json.contains(""spender""));
+    assert!(json.contains("\"risk\": \"MEDIUM\""));
+    assert!(json.contains("\"function\": \"approve\""));
+    assert!(json.contains("\"spender\""));
 }

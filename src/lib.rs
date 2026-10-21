@@ -431,7 +431,7 @@ pub fn format_json(analysis: &Analysis) -> String {
         .iter()
         .map(|argument| {
             format!(
-                "{{"name":{},"type":{},"value":{}}}",
+                "{{\"name\":{},\"type\":{},\"value\":{}}}",
                 json_string(argument.name),
                 json_string(argument.kind),
                 json_string(&argument.value)
@@ -449,22 +449,14 @@ pub fn format_json(analysis: &Analysis) -> String {
 
     format!(
         concat!(
-            "{
-",
-            "  "selector": {},
-",
-            "  "signature": {},
-",
-            "  "function": {},
-",
-            "  "risk": {},
-",
-            "  "summary": {},
-",
-            "  "arguments": [{}],
-",
-            "  "warnings": [{}]
-",
+            "{\n",
+            "  \"selector\": {},\n",
+            "  \"signature\": {},\n",
+            "  \"function\": {},\n",
+            "  \"risk\": {},\n",
+            "  \"summary\": {},\n",
+            "  \"arguments\": [{}],\n",
+            "  \"warnings\": [{}]\n",
             "}"
         ),
         json_string(&analysis.selector),
@@ -505,6 +497,5 @@ pub fn format_human(analysis: &Analysis) -> String {
         }
     }
 
-    lines.join("
-")
+    lines.join("\n")
 }
