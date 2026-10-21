@@ -413,7 +413,7 @@ fn json_escape(value: &str) -> String {
 }
 
 fn json_string(value: &str) -> String {
-    format!(""{}"", json_escape(value))
+    format!("\"{}\"", json_escape(value))
 }
 
 pub fn format_json(analysis: &Analysis) -> String {
@@ -447,26 +447,25 @@ pub fn format_json(analysis: &Analysis) -> String {
         .collect::<Vec<_>>()
         .join(",");
 
-    format!(
-        concat!(
-            "{\n",
-            "  \"selector\": {},\n",
-            "  \"signature\": {},\n",
-            "  \"function\": {},\n",
-            "  \"risk\": {},\n",
-            "  \"summary\": {},\n",
-            "  \"arguments\": [{}],\n",
-            "  \"warnings\": [{}]\n",
-            "}"
-        ),
-        json_string(&analysis.selector),
-        signature,
-        function,
-        json_string(analysis.risk.as_str()),
-        json_string(&analysis.summary),
-        arguments,
-        warnings
-    )
+    let mut output = String::from("{\n");
+    output.push_str(&format!(
+        "  \"selector\": {},\n",
+        json_string(&analysis.selector)
+    ));
+    output.push_str(&format!("  \"signature\": {signature},\n"));
+    output.push_str(&format!("  \"function\": {function},\n"));
+    output.push_str(&format!(
+        "  \"risk\": {},\n",
+        json_string(analysis.risk.as_str())
+    ));
+    output.push_str(&format!(
+        "  \"summary\": {},\n",
+        json_string(&analysis.summary)
+    ));
+    output.push_str(&format!("  \"arguments\": [{arguments}],\n"));
+    output.push_str(&format!("  \"warnings\": [{warnings}]\n"));
+    output.push('}');
+    output
 }
 
 pub fn format_human(analysis: &Analysis) -> String {
