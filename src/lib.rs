@@ -399,13 +399,12 @@ fn json_escape(value: &str) -> String {
 
     for ch in value.chars() {
         match ch {
-            '"' => output.push_str("\""),
-            '\' => output.push_str("\\"),
-            '
-' => output.push_str("\n"),
-            '' => output.push_str("\r"),
-            '	' => output.push_str("\t"),
-            ch if ch.is_control() => output.push_str(&format!("\u{:04x}", ch as u32)),
+            '"' => output.push_str("\\\""),
+            '\\' => output.push_str("\\\\"),
+            '\n' => output.push_str("\\n"),
+            '\r' => output.push_str("\\r"),
+            '\t' => output.push_str("\\t"),
+            ch if ch.is_control() => output.push_str(&format!("\\u{:04x}", ch as u32)),
             ch => output.push(ch),
         }
     }
