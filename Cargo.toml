@@ -1,0 +1,9 @@
+[package]
+name = "signlens"
+version = "0.1.0"
+edition = "2021"
+description = "Offline EVM calldata decoder with approval risk warnings"
+license = "MIT"
+repository = "https://github.com/Vadimkakek/SignLens"
+
+[dependencies]
