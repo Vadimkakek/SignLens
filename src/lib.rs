@@ -95,7 +95,7 @@ pub fn decode_hex(input: &str) -> Result<Vec<u8>, AnalyzeError> {
     let bytes = hex.as_bytes();
     let mut output = Vec::with_capacity(bytes.len() / 2);
 
-    for pair in bytes.chunks_exact(2) {
+    for pair in bytes.as_chunks::<2>().0 {
         let high = hex_nibble(pair[0])?;
         let low = hex_nibble(pair[1])?;
         output.push((high << 4) | low);
